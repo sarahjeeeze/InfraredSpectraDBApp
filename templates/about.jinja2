@@ -1,0 +1,17 @@
+{% extends 'layout.jinja2' %}
+
+
+{% block content %}
+<p>{{ content|safe }}</p>
+<p>
+<a href="{{ edit_url }}">
+    extra things 
+</a>
+</p>
+<p>
+    this website is fo xyz <strong></strong>, created by <strong> Sarah G</strong>.
+</p>
+<p>You can return to the
+<a href="{{request.route_url('about', pagename='about')}}">FrontPage</a>.
+</p>
+{% endblock content %}
