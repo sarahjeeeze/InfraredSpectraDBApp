@@ -1,2 +1,4 @@
-# InfraredSpectraDBApp
+# BiomoleculeInfraredSpectraDBApp  
+
+BIRDB
 Masters project
