@@ -1,0 +1,22 @@
+
+
+#view the file
+
+less trimmed_Negative.fq
+
+#it looks from the file that the adapor regions have not been spliced off?
+
+
+/s/software/fastqc/v0.11.8/FastQC/fastqc trimmed_Negative.fq
+
+#view fast QC report
+#you can see from the report that after position10the quality of the sequence improves
+
+firefox trimmed_negative_fastqc_report.html
+
+
+# use bow tie to align negative with map - Try end to end aligment and local alignment as see which give sthe best results 
+
+time /s/software/anaconda/python3/bin/bowtie2 --local -x ${st_path}/course_materials/genomes/AFPN02.1/AFPN02.1_merge -q ${st_path}/course_materials/fastq/trimmed_Negative.fq -S Negative.sam 2> Negative_bowtie_stats.txt
+
+#this makes no difference 

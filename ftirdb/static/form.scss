@@ -1,0 +1,49 @@
+/* Position the checkbox in upper left corner & hide */
+input[type=checkbox] {
+  position: absolute;
+  visibility: hidden;
+}
+
+
+/* Styling Parts */
+#part1,
+#part2,
+#part3 {
+  display: block;
+  opacity: 1;
+  transition: all 1s ease-in-out;
+}
+
+
+/* Hide Parts 2 & 3 on Page Load */
+#part2,
+#part3 {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+
+/* Show Step 2 */ 
+#step2:checked ~ #part2 {
+  opacity: 1;
+  height: auto;
+}
+
+/* Hide Step 1 */
+#step2:checked ~ #part1 {
+  opacity: 0;
+  height: 0;
+}
+
+/* Show Step 3 */
+#step3:checked ~ #part3 {
+  opacity: 1;
+  height: auto;
+}
+
+/* Hide Step 2 */
+#step3:checked ~ #part2 {
+  opacity: 0;
+  height: 0;
+}

@@ -1,0 +1,51 @@
+{% extends 'layout.jinja2' %}
+
+{% block subtitle %}Edit {{pagename}} - {% endblock subtitle %}
+
+{% block content %}
+<p>
+JCAMP graph output <strong>{{pagename}}</strong>
+</p>
+<p>You can return to the
+<a href="{{request.route_url('view_page', pagename='FrontPage')}}">Home page</a>.
+</p>
+<p> Currently showing overlay file
+<img class="logo img-responsive" src="{{request.static_url(graphname2| safe) }}" alt="pyramid web framework">
+
+</p>
+
+<p> Add data below
+{#<img class="logo img-responsive" src="{{request.static_url(graphname| safe) }}" alt="pyramid web framework">#}
+
+{#<img class="logo img-responsive" src="{{request.static_url(graphname2| safe) }}" alt="pyramid web framework">#}
+
+<p>
+
+Infrared spectra of Biomolecule A
+
+Any other data can be rendered here
+
+</p>
+<p>
+
+<input type="radio" name="one" checked> one graph </p>
+<p>
+<input type="radio" name="two" > overlay other graph
+
+</p>
+
+<form action="" id="animals">
+<input type="radio" id="onegraph" name="animal" value="red" onClick="changeSrc()">one<br>
+<input type="radio" id="twographs" name="animal" value="blue" onClick="changeSrc()">two<br>
+    </form>
+<img src="{{request.static_url('ftirdb:static/fig.png') }}" id="picture" width=600px>
+
+
+
+</textarea>
+</div>
+<div class="form-group">
+    <button type="submit" name="form.submitted" value="save" class="btn btn-default">Download file</button>
+</div>
+</form>
+{% endblock content %}s

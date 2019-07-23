@@ -1,0 +1,57 @@
+﻿{% extends 'layout.jinja2' %}
+
+<head>
+  <title>
+    Deform Demo Site
+  </title>
+  <!-- Meta Tags -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="C:/ftirdb/ftirdb/static/form.css" type="text/css" />
+  <!-- JavaScript -->
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/form.js"></script>
+  
+</head>
+
+
+
+{% block subtitle %} - {% endblock subtitle %}
+
+{% block content %}
+
+
+<div><p>{{ spectraPage | safe}}</p></div>
+
+<a href="{{request.static_url('ftirdb:static/data/1-butene.jdx') }}" download>
+  <img src="{{request.static_url('ftirdb:static/fig.png') }}" id="picture" width=600px>
+</a>
+
+
+
+<form action="" id="animals">
+<input type="radio" id="onegraph" name="animal" value="red" onClick="changeSrc()">Sample power Spectrum 
+<a href="http://localhost:6543/static/data/{{ filename | safe}}" download > download  </a> <br>
+<input type="radio" id="twographs" name="animal" value="blue" onClick="changeSrc()">Background power spectrum
+<a href="http://localhost:6543/static/data/{{ filename2 | safe}}" download > Download  </a></a> <br>
+<input type="radio" id="threegraphs" name="animal" value="blue" onClick="changeSrc()">Initial result spectrum
+<a href="http://localhost:6543/static/data/{{ filename3 | safe}}" download > Download  </a></a> <br>
+<input type="radio" id="fourgraphs" name="animal" value="red" onClick="changeSrc()">Final published spectrum
+<a href="http://localhost:6543/static/data/{{ filename4 | safe}}" download > download  </a> <br>
+
+    </form>
+
+<div><p>{{ deop | safe}}</p></div>
+<div style="text-align:center;margin-top:40px;">
+  <span class="step"></span>
+  <span class="step"></span>
+</form>  
+</div>
+
+
+
+
+
+{% endblock content %}

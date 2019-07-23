@@ -1,0 +1,68 @@
+﻿  <!-- Meta Tags -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="C:/ftirdb/ftirdb/static/form.css" type="text/css" />
+  <!-- JavaScript -->
+ 
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/form.js"></script>
+  
+
+
+
+{% block subtitle %} - {% endblock subtitle %}
+
+{% block content %}
+
+
+<!-- multistep form -->
+<form id="msform">
+
+    <fieldset id="firstField">
+        <h2 class="fs-title"> Do you enjoy Math or Science?</h2>
+        <h3 class="fs-subtitle">This is step 1</h3>
+
+        <input type="button" name="maths" class="next action-button" value="Math" />
+
+        <input type="button" name="science" class="next action-button" value="Science" />
+
+    </fieldset>
+
+    <fieldset id="mathsField">
+        <h2 class="fs-title">Math</h2>
+        <h3 class="fs-subtitle">Your presence on the social network</h3>
+        <input type="text" name="twitter" placeholder="Twitter" />
+        <input type="text" name="facebook" placeholder="Facebook" />
+        <input type="text" name="gplus" placeholder="Google Plus" />
+        <input type="button" name="previous" class="previous action-button" value="Previous" />
+        <input type="button" name="next" class="action-button" value="Submit" />
+    </fieldset>
+
+
+    <fieldset id="scienceField">
+        <h2 class="fs-title">Science</h2>
+        <h3 class="fs-subtitle">We will never sell it</h3>
+        <input type="text" name="fname" placeholder="First Name" />
+        <input type="text" name="lname" placeholder="Last Name" />
+        <input type="text" name="phone" placeholder="Phone" />
+        <textarea name="address" placeholder="Address"></textarea>
+        <input type="button" name="previous" class="previous action-button" value="Previous" />
+        <input type="button" name="next" class="action-button" value="Submit" />
+    </fieldset>
+
+    <fieldset>
+        <h2 class="fs-title">Personal Details</h2>
+        <h3 class="fs-subtitle">We will never sell it</h3>
+        <input type="text" name="fname" placeholder="First Name" />
+        <input type="text" name="lname" placeholder="Last Name" />
+        <input type="text" name="phone" placeholder="Phone" />
+        <textarea name="address" placeholder="Address"></textarea>
+        <input type="button" name="previous" class="previous action-button" value="Previous" />
+        <input type="submit" name="submit" class="submit action-button" value="Submit" />
+    </fieldset>
+
+</form>
+
+<script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/form.js"></script>
+{% endblock content %}

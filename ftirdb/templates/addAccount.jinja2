@@ -1,0 +1,28 @@
+{% extends 'layout.jinja2' %}
+
+{% block title %}Login - {% endblock title %}
+
+{% block content %}
+<p></p>
+<form action="{{ save_url }}" method="post">
+<div class="form-group">
+    <label for="login">Username</label>
+    <input type="text" name="name" value="{{ name }}">
+</div>
+
+<form action="{{ save_url }}" method="post">
+<div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" name="password">
+</div>
+<form action="{{ save_url }}" method="post">
+<div class="form-group">
+    <label for="password">email address</label>
+    <input type="text" name="email">
+</div>
+<div class="form-group">
+    <button type="submit" name="form.submitted" value="addAccount" class="btn btn-default">Submit</button>
+
+</div>
+
+{% endblock content %}

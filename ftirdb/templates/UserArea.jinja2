@@ -1,0 +1,21 @@
+{% extends 'layout.jinja2' %}
+
+{% block subtitle %}Edit {{pagename}} - {% endblock subtitle %}
+
+{% block content %}
+<p>
+
+
+Account details:
+</p>
+<p> User name: 
+{{ user.name }} </p>
+<p>id number: {{ user.id}} </p>
+
+Saved files
+
+x
+y
+z
+
+{% endblock content %}

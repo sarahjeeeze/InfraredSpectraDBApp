@@ -1,0 +1,61 @@
+hope
+
+gs002
+
+MY password
+
+^KBdQPVg
+
+
+
+
+Birdb logon
+
+ssh -X birdb@magpie
+
+swj82mfp
+
+to copy try 
+
+pscp -r c:\ftirdb gs002@ssh-ext.cryst.bbk.ac.uk:/d/user6/gs002
+
+
+pscp -r c:\ftirdb gs002@ssh-ext.cryst.bbk.ac.uk:/d/user6/gs002
+
+pscp -r \d\user6\gs002\ftirdb birdb@magpie:/l_mnt/apache/vhosts/birdb/html
+
+from hope or thoth
+
+magpie has pyramids running (sporpio2 is hosted there), but there might 
+be compatability issues with the running version. Let me know what you find.
+
+best wishes
+
+Mark
+
+-------------------------------------------------------------------------
+
+Hi Mark,
+
+The basic birdb site is running at:-
+http://birdb.biophysics.ismb.lon.ac.uk/
+
+The files are on magpie at /l_mnt/apache/vhosts/birdb/html
+Log files in /l_mnt/apache/vhosts/birdb/logs
+
+The birdb account pswd is 
+The Mysql db is birdb and the pswd is qkd42cua
+
+Cheers, Dave H.
+
+
+
+ssh gs002@ssh-ext.cryst.bbk.ac.uk
+# ssh connect thoth
+ssh -X thoth
+
+maybe try copying files on to local area and then from local on to birdb? 
+
+
+
+pscp c:\documents\info.txt userid@server.example.com:/tmp/foo/info.txt

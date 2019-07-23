@@ -1,0 +1,43 @@
+﻿{% extends 'layout.jinja2' %}
+
+<head>
+  <title>
+    Deform Demo Site
+  </title>
+  <!-- Meta Tags -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="C:/ftirdb/ftirdb/static/form.css" type="text/css" />
+  <!-- JavaScript -->
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/form.js"></script>
+ 
+  
+</head>
+
+
+
+{% block subtitle %} - {% endblock subtitle %}
+
+{% block content %}
+
+
+<div><p>{{ experimentForm | safe}}</p></div>
+
+
+
+
+<div style="text-align:center;margin-top:40px;">
+  <span class="step"></span>
+  <span class="step"></span>
+</form>  
+</div>
+
+
+
+
+
+
+{% endblock content %}

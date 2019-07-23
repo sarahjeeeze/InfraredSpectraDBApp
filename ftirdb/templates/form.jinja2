@@ -1,0 +1,98 @@
+﻿{% extends 'layout.jinja2' %}
+
+<head>
+  <title>
+    Deform Demo Site
+  </title>
+  <!-- Meta Tags -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="C:/ftirdb/ftirdb/static/form.css" type="text/css" />
+  <!-- JavaScript -->
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/form.js"></script>
+  
+</head>
+
+
+
+{% block subtitle %} - {% endblock subtitle %}
+
+{% block content %}
+
+
+<div><p>{{form | safe}}</p></div>
+<div><p>{{form | safe}}</p></div>
+<div><p>{{atrform | safe}}</p></div>
+<div><p>{{chemicalsform | safe}}</p></div>
+<div><p>{{data_aquisitionform | safe}}</p></div>
+<div><p>{{depositorform | safe}}</p></div>
+<div><p>{{dried_filmform | safe}}</p></div>
+<div><p>{{experimentform | safe}}</p></div>
+<div><p>{{experimental_conditionsform | safe}}</p></div>
+<div><p>{{fourier_transform_processingform | safe}}</p></div>
+<div><p>{{gasform | safe}}</p></div>
+<div><p>{{liquidform | safe}}</p></div>
+<div><p>{{molecular_compositionform | safe}}</p></div>
+<div><p>{{moleculeform | safe}}</p></div>
+<div><p>{{molecule_has_molecular_compositionform | safe}}</p></div>
+<div><p>{{not_atrform | safe}}</p></div>
+<div><p>{{post_processing_and_deposited_spectraform | safe}}</p></div>
+<div><p>{{projectform | safe}}</p></div>
+<div><p>{{project_has_experimentform | safe}}</p></div>
+<div><p>{{proteinform | safe}}</p></div>
+<div><p>{{publicationform | safe}}</p></div>
+<div><p>{{publication_has_experimentform | safe}}</p></div>
+<div><p>{{sampleform | safe}}</p></div>
+<div><p>{{solidform | safe}}</p></div>
+<div><p>{{spectraform | safe}}</p></div>
+<div><p>{{spectrometerform | safe}}</p></div>
+<div><p>{{state_of_sampleform | safe}}</p></div>
+
+
+{% set navigation %}
+    <li><a href="/">Index</a>
+    <li><a href="/downloads">Downloads</a>
+{% endset %}
+
+{ navigation } 
+<div class="form-group">
+    <button type="submit" name="submitbutton" value="Save" class="btn btn-default">Save</button>
+</div>
+
+
+
+<div style="overflow:auto;">
+  <div style="float:right;">
+    <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+    <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:40px;">
+  <span class="step"></span>
+  <span class="step"></span>
+</form>  
+</div>
+
+
+
+
+
+<p>
+<a href="{{ edit_url }}">
+    Edit this page
+</a>
+</p>
+<p>
+    Viewing <strong></strong>, created by <strong></strong>.
+</p>
+
+
+
+<p>You can return to the
+<a href="{{request.route_url('view_page', pagename='FrontPage')}}">FrontPage</a>.
+</p>
+{% endblock content %}

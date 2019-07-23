@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="{{request.locale_name}}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="pyramid web application">
+    <meta name="author" content="Pylons Project">
+    <link rel="shortcut icon" href="{{request.static_url('ftirdb:static/pyramid.png')}}">
+
+    <title>{% block subtitle %}{% endblock %}FTIRDB project</title>
+
+    
+
+    <!-- Custom styles for this scaffold -->
+   
+
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/form.js"></script>
+ <script type="text/javascript"
+          src="C:/ftirdb/ftirdb/static/deform.js"></script>
+</head>
+<body>
+
+
+  <script type = "text/javascript" src = "{{request.static_url('ftirdb:static/radiobutton.js') }}"></script>
+    
+
+
+
+
+  <body>
+
+
+        <div class="row">
+ 		<div class = "col-sm-5" left>
+            <img class="logo img-responsive" src="{{request.static_url('ftirdb:static/FTIRDB.png') }}" alt="pyramid web framework"></div>
+		<div class = "col-sm-3" center>
+		<p></p>
+		<p>
+		<img class="logo img-responsive" src="{{request.static_url('ftirdb:static/bbklogo-black.gif') }}" alt="pyramid web framework"></p>
+          <p></p>
+ 	    {% if request.user is none %}
+            
+            <a href="{{ request.route_url('login') }}">Login</a>
+            </p>
+            {% else %}
+            
+            {{request.user.name}} <a href="{{request.route_url('logout')}}">Logout</a>
+            </p>
+            {% endif %}
+
+        </div>
+</div>
+
+	<nav class="navbar navbar-inverse">
+  <!-- Brand -->
+ 
+
+  <!-- Links -->
+	<div class="container-fluid">
+	<
+	
+  <ul class="nav navbar-nav">
+    <li class="active">
+      <li><a class="nav-link" href="http://localhost:6543/about">Home</a></li>
+    </li>
+    
+  
+	<!-- Dropdown -->
+
+    <li class="dropdown">
+      <a class="dropdown-toggle" href="#" data-toggle="dropdown">Add entry
+	<span class="caret"></span></a>
+        
+      	<ul class="dropdown-menu">
+      
+        <li><a href="http://localhost:6543/projectform">Project</a></li>
+					
+					<li><a href="http://localhost:6543/experimentForm">Experiment</a></li>
+					<li><a href="http://localhost:6543/sampleForm">Sample</a></li>
+					<li><a href="http://localhost:6543/moleculeForm">Molecule</a></li>
+					<li><a href="http://localhost:6543/spectrometerForm">Spectrometer</a></li>
+					<li><a href="http://localhost:6543/spectraForm">Spectra</a></li>
+      </ul>
+    </li>
+
+  
+	<li><li class="nav-item"><a class="nav-link" href="http://localhost:6543/searchdb">Search DB</a></li>
+				<li class="nav-item"><a class="nav-link" href="http://localhost:6543/graph">Search results</a></li>
+				<li class="nav-item"><a class="nav-link" href="http://localhost:6543/login">User area</a></li>
+        			<li class="nav-item"><a class="nav-link" href="http://localhost:6543/about">About</a></li>
+
+</nav>
+     
+<div class="col-sm-5" right>
+    
+            {% block content %}{% endblock %}
+          
