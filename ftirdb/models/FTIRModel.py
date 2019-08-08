@@ -5,14 +5,14 @@ File: models/FTIRModel.py
 
 Version: v1.0
 Date: 10.09.2018
-Function: Create the main FTIRDB table in the data base this may be edited easily
+Function: Create the main tables in the BIRDB
 
 This program is released under the GNU Public Licence (GPL V3)
 
 --------------------------------------------------------------------------
 Description:
 
-This file contains the SQLalchemy model for the FTIRDB.
+This file contains the SQLalchemy model for the BIRDB (originally refered to as FTIRDB)
 
 The model includes any contstraints that entered data should adhere to as well as any
 links to other models.
@@ -20,7 +20,7 @@ links to other models.
 
 """
 
-#import necessary modules from sqlalchemy - may need to add others
+#import necessary modules from sqlalchemy
 
 from sqlalchemy import (
     Column,
@@ -41,7 +41,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Date, String
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT
 
-
+#immport colander lib 
 
 import colander
 from colander import Range
@@ -57,7 +57,7 @@ metadata = Base.metadata
 class project(Base):
     __tablename__ = 'project'
 
-    descriptive_name = Column(String(300),info={'colanderalchemy': {'description': 'explain what the project is'}})
+    descriptive_name = Column(String(500),info={'colanderalchemy': {'description': 'explain what the project is'}})
     project_ID = Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
     related_experiments_ID = Column(String(100),info={'colanderalchemy': {'description': 'provide ID of any existing related experiments'}})
    
@@ -67,8 +67,8 @@ class sample(Base):
     __tablename__ = 'sample'
 
     sample_ID = Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
-    descriptive_name = Column(String(45))
-    composition = Column(String(45))
+    descriptive_name = Column(String(500))
+    composition = Column(String(300), info={'colanderalchemy': {'description': 'Description of the composition'}})
     project_ID = Column(INTEGER(6),info={'colanderalchemy': {'exclude': True}})
 
 
@@ -77,9 +77,8 @@ class state_of_sample(Base):
 
     state_of_sample_ID = Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
     state = Column(Enum('gas', 'solid', 'dried film', 'liquid',''), nullable=False, info={'colanderalchemy': {'exclude': True}})
-    #enter this somehow with a radiobutton or tick box?
-    temperature_degrees = Column(INTEGER(11), default=0)
-    pressure_PSI = Column(INTEGER(11), default=0)
+    temperature_degrees = Column(INTEGER(11), default=0, info={'colanderalchemy': {'description': 'In degrees centigrade'}})
+    pressure_PSI = Column(INTEGER(11), default=0, info={'colanderalchemy': {'validator': Range(min=0, max=1000), 'description': 'PSI'}})
     #child 
     sample_ID = Column(Integer, ForeignKey('sample.sample_ID'),  info={'colanderalchemy': {'exclude': True}})
 
@@ -87,7 +86,7 @@ class molecules_in_sample(Base):
     __tablename__ = 'molecules_in_sample'
 
     molecular_composition_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
-    descriptive_name = Column(String(45))
+    descriptive_name = Column(String(300))
     molecule_1_name = Column(String(45))
     concentration_1 = Column(INTEGER(11) ,default = 100, info={'colanderalchemy': {'validator': Range(min=1, max=100),'description': 'as a %'}})
     molecule_2_name = Column(String(45))
@@ -107,8 +106,8 @@ class liquid(Base):
     __tablename__ = 'liquid'
 
   
-    pH = Column(Integer)
-    solvent = Column(String(45), info={'colanderalchemy': {'description':'name'}})
+    pH = Column(Integer, default = 7, info={'colanderalchemy': {'validator': Range(min=0, max=14),'description': 'Between 0 and 14'}})
+    solvent = Column(String(45), info={'colanderalchemy': {'description':'name of solvent'}})
     atmosphere = Column(String(45),info={'colanderalchemy': {'description': 'psi'}})
     liquid_ID =  Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
 
@@ -121,11 +120,11 @@ class liquid(Base):
 class dried_film(Base):
     __tablename__ = 'dried_film'
 
-    atmosphere = Column(String(45))
+    atmosphere = Column(String(45),info={'colanderalchemy': {'description': 'kPa'}})
     volume = Column(String(45), info={'colanderalchemy': {'description': 'mm^3'}})
     area = Column(String(45),info={'colanderalchemy': {'description': 'mm^2'}})
-    solvent = Column(String(45), info={'colanderalchemy': {'description': 'name'}})
-    pH = Column(String(45), server_default=text("'RANGE(0,14)'"))
+    solvent = Column(String(45), info={'colanderalchemy': {'description': 'name of solvent'}})
+    pH = Column(String(45), server_default=text("'RANGE(0,14)'"), info={'colanderalchemy': {'validator': Range(min=0, max=14),'description': 'Between 0 and 14'}})
     
     dried_film_ID = Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
 
@@ -137,7 +136,7 @@ class gas(Base):
     __tablename__ = 'gas'
 
     atmosphere = Column(String(45), info={'colanderalchemy': {'description': 'atmosphere in psi'}})
-    water_vapour = Column(String(45))
+    water_vapour = Column(String(45), info={'colanderalchemy': {'description': 'g/m3'}})
     gasID = Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
 
     state_of_sample_ID = Column(Integer, ForeignKey('state_of_sample.state_of_sample_ID'), info={'colanderalchemy': {'exclude': True}})
@@ -155,7 +154,6 @@ class solid(Base):
 
 
 class molecule(Base):
-    #not deleting but thinking i wont use this? 
     __tablename__ = 'molecule'
 
     molecule_name = Column(String(45), nullable=False)
@@ -164,8 +162,7 @@ class molecule(Base):
     sample_ID = Column(INTEGER(11), default=0, info={'colanderalchemy': {'exclude': True}})
 
 
-#association table for relationship
-# get it to fill out association table if molecule is created from the sample page, but dont fill out if molecule is created indendently
+#association table for relationship, not currently in use
 association_molecule = Table(
     'association_molecule', metadata,
     Column('mols_in_sample_ID', ForeignKey('molecules_in_sample.molecular_composition_ID'), primary_key=True),
@@ -175,18 +172,17 @@ association_molecule = Table(
 class protein(Base):
     __tablename__ = 'protein'
     sample_ID = Column(Integer, nullable=True, info={'colanderalchemy': {'exclude': True}})
-
     protein_ID = Column(INTEGER(6), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
-    protein_common_name = Column(String(45))
-    alternative_names = Column(String(45))
-    source_organism = Column(String(45))
-    uniprot_ID = Column(String(45))
-    sequence= Column('sequence', String(45), info={'colanderalchemy': {'description': 'Will get to autopoulate using biopython in future'}})
-    expression_system_or_natural_source = Column(String(45))
-    expressed_as = Column(String(45))
-    post_translational_modifications = Column(String(100))
-    mutation_details = Column(String(100))
-    expression_tags = Column(String(100))
+    protein_common_name = Column(String(300))
+    alternative_names = Column(String(300))
+    source_organism = Column(String(300))
+    uniprot_ID = Column(String(300))
+    sequence= Column('sequence', String(300), info={'colanderalchemy': {'description': 'Will get to autopoulate using biopython in future'}})
+    expression_system_or_natural_source = Column(String(300))
+    expressed_as = Column(String(300))
+    post_translational_modifications = Column(String(300))
+    mutation_details = Column(String(300))
+    expression_tags = Column(String(300))
     isotopically_labelled = Column(Enum('yes', 'no',''), default = 'no')
     description_of_labels = Column(String(100), info={'colanderalchemy': {'description': 'if yes'}})
     ligands_present = Column(Enum('yes', 'no',''), default = 'no')
@@ -194,23 +190,22 @@ class protein(Base):
     #one to one relationshiip with molecule
     # 1 to 1 relationship
     molecule_ID = Column(Integer, nullable=True, info={'colanderalchemy': {'exclude': True}}) 
-    #molecule = relationship("molecule", back_populates="protein")
 
 
 class chemical(Base):
     __tablename__ = 'chemical'
 
     chemical_ID =Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
-    CAS = Column(String(45))
-    smiles_inchi_mol2 = Column('smiles/inchi/mol2', String(45))
-    chemical_formula = Column('chemical formula', String(45))
-
+    CAS = Column(String(20), info={'colanderalchemy': {'description': 'write in the format xxxxxx-xx-x'}})
+    smiles_inchi_mol2 = Column(String(300), info={'colanderalchemy': {'description':'smiles/inchi or mol2'}})
+    chemical_formula = Column('chemical formula', String(300))
     molecule_ID = Column(Integer, nullable=True, info={'colanderalchemy': {'exclude': True}})
 
 class other(Base):
     __tablename__ = 'other'
 
     other_ID =Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
+    name = Column(String(300))
     description = Column(String(300))
     molecule_ID = Column(Integer, nullable=True, info={'colanderalchemy': {'exclude': True}})
 
@@ -218,9 +213,9 @@ class experiment(Base):
     __tablename__ = 'experiment'
 
     experiment_ID =Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
+    name  = Column(String(300), nullable=True)
     project_ID = Column(INTEGER(6),info={'colanderalchemy': {'exclude': True}})
-    experiment_description = Column(String(100))
-    
+    experiment_description = Column(String(300))
     related_samples = Column(String(100), info={'colanderalchemy': {'description': 'Any related samples ID or these can be added'}})
 
     
@@ -230,7 +225,7 @@ class experiment(Base):
   
 
 
-# get forms to automatically fill out    
+#association tables not used
 exp_has_publication = Table(
 	'exp_has_publication', metadata,
 	Column('publication_ID', ForeignKey('publication.publication_ID'), nullable=False, index=True),
@@ -248,22 +243,16 @@ class experimental_conditions(Base):
     __tablename__ = 'experimental_conditions'
 
     experimental_conditions_ID =Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
-    
     phase = Column(String(45), nullable=True)
-    temperature = Column(String(45), nullable=True, info={'colanderalchemy': {'description': 'degrees centigrade'}})
-    pressure = Column(String(45), nullable=True , info={'colanderalchemy': {'description': 'psi'}})
+    temperature = Column(Integer, default=0, nullable=True, info={'colanderalchemy': {'description': 'degrees centigrade'}})
+    pressure = Column(Integer,default=0, nullable=True , info={'colanderalchemy': {'description': 'psi'}})
     experiment_ID = Column(INTEGER(4), info={'colanderalchemy': {'exclude': True}})
-    
-    
-    
-    
 
 
 class data_aquisition(Base):
     __tablename__ = 'data_aquisition'
 
     data_aq_ID =Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, default=0, info={'colanderalchemy': {'exclude': True}})
-    
     number_of_sample_scans = Column(INTEGER(11), nullable=True, default = 0)
     number_of_background_scans = Column(INTEGER(11), nullable=True, default = 0)
     scanner_velocity_KHz = Column(INTEGER(11), nullable=True, default = 0)
@@ -279,8 +268,8 @@ class spectrometer(Base):
     __tablename__ = 'spectrometer'
 
     spectrometer_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
-    instrument_manufacturer = Column(String(45))
-    instrument_model = Column(String(45))
+    instrument_manufacturer = Column(String(300))
+    instrument_model = Column(String(300))
     light_source = Column(Enum('globar', 'laser', 'synchrotron', 'other',''), default = 'globar',nullable=True, info={'colanderalchemy': {'exclude': True}} )
     beamsplitter = Column(Enum('KBr', 'Mylar',''), default='KBr',nullable=True, info={'colanderalchemy': {'exclude': True}})
     detector__type = Column('detector_ type', Enum('DTGS', 'MCT Broad band', 'MCT narrow band', 'other',''), default='other', nullable=True, info={'colanderalchemy': {'exclude': True}})
@@ -289,20 +278,15 @@ class spectrometer(Base):
     mode_of_recording = Column(Enum('transmission', 'ATR', 'transflectance', 'diffuse reflection',''), default='transmission',nullable=True, info={'colanderalchemy': {'exclude': True}})
     experiment_ID = Column(INTEGER(11), nullable=True , info={'colanderalchemy': {'exclude': True}})
    
-    
-    
-
 
 class publication(Base):
     __tablename__ = 'publication'
 
     publication_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
     experiment_ID = Column(INTEGER(11), nullable=True , info={'colanderalchemy': {'exclude': True}})
-
-    publication_name = Column(String(45))
-    authors = Column('author', String(100))
-    link = Column(String(100))
-#have left out for now - need to add in 
+    publication_name = Column(String(1000))
+    authors = Column('author', String(1000))
+    link = Column(String(1000), info={'colanderalchemy': {'description': 'link to website'}})
 
     
 
@@ -312,8 +296,8 @@ class not_atr(Base):
     
     not_atr_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
     sample_window_material = Column(Enum('CaF2', 'BaF2', 'ZnSe', 'ZnS', 'CdTe', 'KBr', 'KRS-5', 'other',''), default='CaF2',info={'colanderalchemy': {'exclude': True}})
-    pathlength__if_known_ = Column('pathlength (if known)', INTEGER(11))
-    multi_well_plate = Column('multi-well_plate', Enum('yes', 'nno',''), default = 'no', info={'colanderalchemy': {'description': 'yes or no'}})
+    pathlength__if_known_ = Column('pathlength (if known)', INTEGER(11), info={'colanderalchemy': {'description': 'mm'}})
+    multi_well_plate = Column('multi-well_plate', Enum('yes', 'no',''), default = 'no', info={'colanderalchemy': {'description': 'yes or no'}})
     product_code = Column( String(45),info={'colanderalchemy': {'description': 'If yes then what is the product code?'}})
     spectrometer_ID = Column(INTEGER(11),info={'colanderalchemy': {'exclude': True}})
                                                      
@@ -321,20 +305,18 @@ class atr(Base):
     __tablename__ = 'atr'
 
     atr_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
-    prism_size_mm = Column(INTEGER(11),nullable=True, default= 0 )
+    prism_size_mm = Column(INTEGER(11),nullable=True, default= 0 , info={'colanderalchemy': {'description': 'mm'}})
     number_of_reflections = Column(INTEGER(11),nullable=True, default = 0)
     prism_material = Column(Enum('Diamond', 'Ge', 'Si', 'KRS-5', 'ZnS', 'ZnSe', ''), default='Diamond', nullable=True, info={'colanderalchemy': {'exclude': True}})
-    
-    angle_of_incidence_degrees = Column(INTEGER(11),nullable=True, default = 0)
+    angle_of_incidence_degrees = Column(INTEGER(11),nullable=True, default = 0, info={'colanderalchemy': {'description': 'degrees'}})
     spectrometer_ID = Column(INTEGER(11),info={'colanderalchemy': {'exclude': True}})
 
 class transflectance_diffuse(Base):
     __tablename__ = 'transf_diffuse'
     trans_diff_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
-
-    reflectance_device = Column(String(45), nullable=True)
-    slide_material = Column(String(45),nullable=True)
-    angle_of_incidence = Column(String(45),nullable=True,info={'colanderalchemy': {'description': 'In degrees'}})
+    reflectance_device = Column(String(300), nullable=True)
+    slide_material = Column(String(300),nullable=True)
+    angle_of_incidence = Column(String(300),nullable=True,info={'colanderalchemy': {'description': 'In degrees'}})
     spectrometer_ID = Column(INTEGER(11),info={'colanderalchemy': {'exclude': True}})
 
 #spectra
@@ -344,24 +326,19 @@ class spectra(Base):
     __tablename__ = 'spectra'
 
     spectra_ID = Column(INTEGER(4), primary_key=True, unique=True,  autoincrement=True, info={'colanderalchemy': {'exclude': True}})
-    spectra_type = Column(Enum('sample power', 'background power spectrum', 'initial result spectrum', ''), nullable=True, info={'colanderalchemy': {'exclude': True}})
     format = Column(Enum('absorbance', 'transmittance', 'reflectance', 'log reflectance', 'kubelka munk', 'ATR spectrum', 'pas spectrum', ''), nullable=True, info={'colanderalchemy': {'exclude': True}})
-    #add a spectra name column 
+    #add a spectra name column in future
     experiment_ID = Column(Integer,nullable=True)
-    
-    
-    
-
 
 
 class ft_processing(Base):
     __tablename__ = 'ft_processing'
-    ft_processing_ID = Column(INTEGER(11), primary_key=True, info={'colanderalchemy': {'exclude': True}})
+    ft_processing_ID = Column(INTEGER(11), default = 0, primary_key=True, info={'colanderalchemy': {'exclude': True}})
     apodization__function = Column('apodization_ function', Enum('Blackman-Harris 3-Term','','Blackman-Harris 5-Term', 'Norton-Beer,weak', 'Norton-Beer,medium', 'Norton-Beer,strong', 'Boxcar', 'Triangular', 'Four point', 'other'))
-    zero_filling_factor = Column(INTEGER(11))
+    zero_filling_factor = Column(INTEGER(11), default = 0, info={'colanderalchemy': {'description': 'Si'}})
     non_linearity_correction = Column(Enum('yes', 'no',''),info={'colanderalchemy': {'description': 'yes or no'}})
     phase_correction_mode = Column(Enum('Mertz', 'Mertz signed', 'Power spectrum', 'Mertz no peak search', 'Mertz signed no peak search', 'Power spectrum no peak search',''))
-    phase_resolution = Column(INTEGER(11))
+    phase_resolution = Column(INTEGER(11) , default=0)
     experiment_ID = Column(ForeignKey('experiment.experiment_ID'))
 
 
@@ -380,7 +357,7 @@ class post_processing_and_deposited_spectra(Base):
     baseline_correction = Column(String(45))
     scaling = Column(String(45))
     second_derivative = Column('2nd_derivative', Enum('yes', 'no',''), default = 'no')
-    method = Column(String(45))
+    method = Column(String(300))
     window_point_size_smoothing = Column('window_point_size/smoothing', String(45))
     final_published_spectrum = Column(String(45), info={'colanderalchemy': {'exclude':True}})
     final_published_spectrum_format = Column(Enum('absorbance', 'transmittance','', 'reflectance', 'log reflectance', 'Kubelka Munk', 'ATR spectrum', 'PAS spectrum'), default='absorbance')
@@ -392,8 +369,8 @@ class post_processing_and_deposited_spectra(Base):
 
 
 
-class FTIRModel(Base):
-    """ This class is to create the main FTIRModel table with SQL alchemy """
+"""class FTIRModel(Base):
+    This class is to create the main FTIRModel table with SQL alchemy 
     __tablename__ = 'FTIRModel'
     id = Column(Integer, primary_key=True)
     name = Column(String(32), nullable=False, unique=True)
@@ -401,5 +378,5 @@ class FTIRModel(Base):
     magic = Column(Text, nullable=False)
     
     creator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    creator = relationship('User', backref='created_pages')
+    creator = relationship('User', backref='created_pages')"""
 

@@ -5,7 +5,7 @@ File: views/graph.py
 
 Version: v1.0
 Date: 10.09.2018
-Function: provides functions required for addAccount view
+Function: provides functions required for inputting the spectra 
 
 This program is released under the GNU Public Licence (GPL V3)
 
@@ -64,26 +64,20 @@ from deform.widget import Widget, FileUploadWidget
 from deform.interfaces import FileUploadTempStore 
 from ..models import FTIRModel, dried_film, data_aquisition,post_processing_and_deposited_spectra, experimental_conditions, spectra, project_has_experiment, exp_has_publication, experiment, gas, molecule, protein, chemical, liquid, project, molecules_in_sample, sample, solid, state_of_sample
 
-# regular expression used to find WikiWords
-
+#choices for drop downs
 type_choices = (('sample power','sample power'),( 'background power spectrum','background power spectrum'),('initial result spectrum','initial result spectrum'),('',''))
 format_choices = (('absorbance','absorbance'), ('transmittance', 'transmittance'),('reflectance','reflectance'),( 'log reflectance','log reflectance'),( 'kubelka munk','kubelka munk'), ( 'ATR spectrum','ATR spectrum'), ('pas spectrum', 'pas spectrum'),('',''))
 
 @view_config(route_name='spectraForm', renderer='../templates/spectraForm.jinja2')
 def spectraForm(request):
     
-    """ project form page """
-  
+    """ view for adding all the spectra information """
+    #create a temporary store for file uploads
     tmpstore = FileUploadTempStore()
 
     class Sample(colander.MappingSchema):
         setup_schema(None,spectra)
         spectraSchema =spectra.__colanderalchemy__
-        type = colander.SchemaNode(
-                colander.String(),
-                default='',
-                widget=deform.widget.SelectWidget(values=type_choices)
-                  )
         format = colander.SchemaNode(
                 colander.String(),
                 default='',
@@ -120,44 +114,45 @@ def spectraForm(request):
         
     if 'submit' in request.POST:
         
-        #add more of these and then work on jcamp graph overlays with javascript
         
     
 
         try:
-                #appstruct = form.validate(controls) #call validate
-                #upload file functionality - sample_power_spectrum as initial example
-                print(request.POST)
+                #appstruct = form.validate(request.POST.items()) #call validate
+                #upload file functionality
                 controls = request.POST.items()
                 pstruct = peppercorn.parse(controls)
-                print(pstruct)
-                """ this doesnt work for now dirName = request.params['experiment_ID']
-                dirName = 'C:/ftirdb/ftirdb/data/' + dirName
-                os.mkdir(dirName)"""
+                # get filenames
                 myfile = pstruct['sample_power_spectrum']['upload']
                 background = pstruct['background_power_spectrum']['upload']
                 init = pstruct['initial_result_spectrum']['upload']
                 final = pstruct['final_spectrum']['upload']
                 #using pure path as coding on windows and putting on to a linux server
-                permanent_store = pathlib.PureWindowsPath('C:/ftirdb/ftirdb/static/data')
+                #specify where to store the files
+                permanent_store = os.path.join('ftirdb','static','data')
+		#open file and add file from temp store to permanent		
                 permanent_file = open(os.path.join(permanent_store,
                                         myfile.filename.lstrip(os.sep)),
                                         'wb')
                 shutil.copyfileobj(myfile.file, permanent_file)
                 myfile.file.close()
+                #close file and repeat for each item
                 permanent_file.close()
+                #the same for back ground spectra
                 permanent_file = open(os.path.join(permanent_store,
                                         background.filename.lstrip(os.sep)),
                                         'wb')
                 shutil.copyfileobj(background.file, permanent_file)
                 background.file.close()
                 permanent_file.close()
+                #the same for the initial spectra
                 permanent_file = open(os.path.join(permanent_store,
                                         init.filename.lstrip(os.sep)),
                                         'wb')
                 shutil.copyfileobj(init.file, permanent_file)
                 init.file.close()
                 permanent_file.close()
+                #the same for final published spectra
                 permanent_file = open(os.path.join(permanent_store,
                                         final.filename.lstrip(os.sep)),
                                         'wb')
@@ -167,12 +162,12 @@ def spectraForm(request):
                 print(myfile.filename)
                 #break through adding schema to db without having to manually enter each one
                 ok = pstruct['spectraSchema']
-                type = request.params['type']
+                # add other spectra details to the database
                 format = request.params['format']
-                page = spectra(**ok, spectra_type=type,format=format)
+                page = spectra(**ok,format=format)
                 request.dbsession.add(page)
            
-                #try the same for upload and file name to add to db
+                #add the filenames as strings to the database so they can be retreived
                 pok = pstruct['ppSchema']
                 sample_power_spectrum= myfile.filename
                 background_power_spectrum= background.filename
@@ -180,10 +175,9 @@ def spectraForm(request):
                 final = final.filename
                 searchdb = request.dbsession.query(spectra).order_by(spectra.spectra_ID.desc()).first()
                 spectra_ID = searchdb.spectra_ID
-                print(spectra_ID)
+                # add other spectra detail to the database
                 page = post_processing_and_deposited_spectra(spectra_ID=spectra_ID,final_published_spectrum=final,sample_power_spectrum=sample_power_spectrum, background_power_spectrum=background_power_spectrum,initial_result_spectrum=initial,**pok)
                 request.dbsession.add(page)
-                #in future change this so it just querys spectra and takes the first option
               
 
 
@@ -205,34 +199,22 @@ def spectraForm(request):
 
 def spectraPage(request):
 
-    """This page takes a project with project_ID in the URL and returns a page with a dictionary of
-    all the values, it also contains buttons for adding samples and experiments. When page is linked from here
-    the child/parent relationship is created"""
+    """This page returns all of the spectra related with a final published spectra and associated data, the spectra will be visible via radiobuttons"""
 
     if 'form.submitted' in request.params:
+        #if any buttons added to page then the actions can be added here
         if request.params['form.submitted'] == 'sample':
-            #retrieve project ID and send to sample page
          return {'projectForm': 'sample'}
         else:
             return {'projectForm': 'experiment'}
             
-        #next_url = request.route_url('projectPage', pagename=4)
-        #return HTTPFound(location=next_url)
-        
+   
         
         
     else:
+        # retreive spectra id from the address
         search = request.matchdict['spectra_ID']
-    #search = request.params['body']
-        """
-        searchspectra = request.dbsession.query(spectra).filter_by(experiment_ID=search).all()
-        spectradic = {}
-    #return the dictionary of all values from the row
-        for u in searchspectra:
-            new = u.__dict__
-            spectradic.update( new )
-        """
-        print(search) 
+        #query the database for the specra_ID's
         ppd = request.dbsession.query(post_processing_and_deposited_spectra).filter_by(spectra_ID=search).all()
 
         depodic = {}
@@ -240,52 +222,59 @@ def spectraPage(request):
             new = u.__dict__
             depodic.update( new )
 
-        print(depodic)
-        print('here')
-            
+      
+        #plot each of the spectra on seperate figures using the dictionary values 
         plt.figure(1)
         plt.tight_layout()
-
-
-        filename = pathlib.PureWindowsPath('C:/ftirdb/ftirdb/data/infrared_spectra/' + depodic['sample_power_spectrum'])
-        
+        # use os.join so it doesnt matter which OS you are using
+        #plot the sample power spectrum
+        filename = os.path.join('ftirdb','static','data','infrared_spectra', depodic['sample_power_spectrum'])
         jcamp_dict = JCAMP_reader(filename)
+        #use jcamp reader python lib to extract x and y values
+        #set x axis to go in opposite direction
+        plt.xlim(max(jcamp_dict['x']),min(jcamp_dict['x']))
         plt.plot(jcamp_dict['x'], jcamp_dict['y'], label='filename', alpha = 0.7, color='blue')
+        #plot the values
+        
         plt.xlabel(jcamp_dict['xunits'])
         plt.ylabel(jcamp_dict['yunits'])
-        plt.savefig(pathlib.PureWindowsPath('C:/ftirdb/ftirdb/static/fig.png'), bbox_inches="tight")
+        plt.savefig(os.path.join('ftirdb','static','fig.png'), bbox_inches="tight")
         
         plt.figure(2)
+        #plot the background spectrum
         plt.tight_layout()
-        filename2 = pathlib.PureWindowsPath('C:/ftirdb/ftirdb/data/infrared_spectra/' + depodic['background_power_spectrum'])
+        filename2 = os.path.join('ftirdb','static','data','infrared_spectra', depodic['background_power_spectrum'])
         jcamp_dict2 = JCAMP_reader(filename2)
        
 
-        print(jcamp_dict2['x'])
-        print(jcamp_dict2['xunits'])
+        plt.xlim(max(jcamp_dict2['x']),min(jcamp_dict2['x']))
         plt.plot(jcamp_dict2['x'], jcamp_dict2['y'], label='filename', alpha = 0.7, color='green')
         plt.xlabel(jcamp_dict2['xunits'])
         plt.ylabel(jcamp_dict2['yunits'])
 
-        plt.savefig(pathlib.PureWindowsPath('C:/ftirdb/ftirdb/static/fig2.png'), bbox_inches="tight")
+        plt.savefig(os.path.join('ftirdb','static','fig2.png'), bbox_inches="tight")
         plt.figure(3)
+        #plot the initial result spectrum
         plt.tight_layout()
 
-        filename3 = pathlib.PureWindowsPath('C:/ftirdb/ftirdb/data/infrared_spectra/' + depodic['initial_result_spectrum'])
+        filename3 = os.path.join('ftirdb','static','data','infrared_spectra', depodic['initial_result_spectrum'])
         jcamp_dict3 = JCAMP_reader(filename3)
-        plt.plot(jcamp_dict3['x'], jcamp_dict3['y'], label='filename', alpha = 0.7, color='red')
+        plt.xlim(max(jcamp_dict3['x']),min(jcamp_dict3['x']))
+        plt.plot(jcamp_dict3['x'], jcamp_dict3['y'], label='filename', alpha = 0.7, color='red')        
         plt.xlabel(jcamp_dict3['xunits'])
         plt.ylabel(jcamp_dict3['yunits'])
-        plt.savefig(pathlib.PureWindowsPath('C:/ftirdb/ftirdb/static/fig3.png'), bbox_inches="tight")
+        plt.savefig(os.path.join('ftirdb','static','fig3.png'), bbox_inches="tight")
+        #plot the final published spectrum
         plt.figure(4)
         plt.tight_layout()
 
-        filename4 = pathlib.PureWindowsPath('C:/ftirdb/ftirdb/data/infrared_spectra/' + depodic['final_published_spectrum'])
+        filename4 = os.path.join('ftirdb','static','data','infrared_spectra', depodic['final_published_spectrum'])
         jcamp_dict4 = JCAMP_reader(filename4)
+        plt.xlim(max(jcamp_dict4['x']),min(jcamp_dict4['x']))
         plt.plot(jcamp_dict3['x'], jcamp_dict3['y'], label='filename', alpha = 0.7, color='magenta')
         plt.xlabel(jcamp_dict4['xunits'])
         plt.ylabel(jcamp_dict4['yunits'])
-        plt.savefig(pathlib.PureWindowsPath('C:/ftirdb/ftirdb/static/fig4.png'), bbox_inches="tight")
+        plt.savefig(os.path.join('ftirdb','static','fig4.png'), bbox_inches="tight")
         #file names ready to be downloaded
         jcampname1 = depodic['sample_power_spectrum'] 
         jcampname2 =depodic['background_power_spectrum']
@@ -294,7 +283,7 @@ def spectraPage(request):
 
 
     
-    #need to work on display of this 
+     
         return { 'deop':depodic, 'sample_power_spectrum': 'ftirdb:static/fig.png', 'background_power_spectrum': 'ftirdb:static/fig2.png',
                 'initial_result_spectrum': 'ftirdb:static/fig3.png', 'filename':jcampname1,'filename2':jcampname2,'filename3':jcampname3,'filename4':jcampname4}
     

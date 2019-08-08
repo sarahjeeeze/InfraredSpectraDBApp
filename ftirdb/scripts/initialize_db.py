@@ -5,14 +5,13 @@ File: scripts/initialize_db.py
 
 Version: v1.0
 Date: 10.09.2018
-Function: running this programme creates the database 
+Function: running this script adds any initial data to the database
 
 This program is released under the GNU Public Licence (GPL V3)
 
 --------------------------------------------------------------------------
 Description:
 ============
-The database can not be created if it already exists.
 
 If database already exists - it is necessary to delete existing DB and recreate
 with new model. 
@@ -32,7 +31,7 @@ from pyramid.scripts.common import parse_vars
 #import sql alchemy model
 
 from .. import models
-from ..models import FTIRModel, User, FTIRModel,spectra, data_aquisition,publication, experimental_conditions, project_has_experiment, exp_has_publication, experiment, molecule, protein, chemical,dried_film, gas, liquid, project, molecules_in_sample, sample, solid, state_of_sample
+from ..models import  User,spectra, data_aquisition,publication, experimental_conditions, project_has_experiment, exp_has_publication, experiment, molecule, protein, chemical,dried_film, gas, liquid, project, molecules_in_sample, sample, solid, state_of_sample
 from ..models import (
     get_engine,
     get_session_factory,
@@ -42,8 +41,8 @@ from ..models import (
 from ..models.meta import Base
 
 def setup_models(dbsession):
-    """ function to set up the main model """
-    model = models.FTIRModel.FTIRModel(name='one', value = 1)
+    """ example of how you would add data via a session """
+    model = models.FTIRModel.project(descriptive_name='example')
     dbsession.add(model)
     
     

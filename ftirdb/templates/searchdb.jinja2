@@ -4,12 +4,10 @@
 
 {% block content %}
 <p>
-Editing <strong>{{pagename}}</strong>
+ <strong>Search Page</strong>
 </p>
-<p>You can return to the
-<a href="{{request.route_url('view_page', pagename='FrontPage')}}">FrontPage</a>.
-</p>
-<p> search for a record:
+
+<p> Search for anything within a table:
 </p>
 
 <form action="{{ save_url }}" method="post">
@@ -18,7 +16,7 @@ Editing <strong>{{pagename}}</strong>
 </textarea>
 </div>
 
-Table
+Choose a table to search 
 <select name="table" id="deformField3" class=" form-control "> 
 <option value="project">Project</option>
 <option value="experiment">Experiment</option> 
@@ -26,16 +24,17 @@ Table
 <option value="molecule">Molecule</option>
 <option value="spectra">Spectra</option>
 <option value="spectrometer">Spectrometer</option>
+<option value="protein">Protein</option>
+<option value="chemical">chemical</option>
+<option value="other">other</option>
 <option selected="selected" value=""></option> </select> 
 
+<br></br>
 <div class="form-group">
-     
-    <input type="submit" name="form.submitted" value="Search" class="btn btn-primary">Search</button>
-</div>
-
-</div>
-<div class="form-group">
-    <button type="submit" name="form.submitted" value="save" class="btn btn-default">Search</button>
+    
+    <input type="submit" name="form.submitted" value="Search" class="btn btn-primary">
 </div>
 </form>
+<br> Search will search in all columns within specified table.
+The results will be returned as a list of ID's and hyperlinks to the records</br>
 {% endblock content %}

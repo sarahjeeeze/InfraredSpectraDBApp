@@ -29,13 +29,12 @@ from pyramid.security import (
 #******************************************
 
 # import the models 
-from .models import FTIRModel, dried_film, gas, publication, data_aquisition, experimental_conditions,spectrometer, project_has_experiment, exp_has_publication, experiment, liquid, project, molecules_in_sample, sample, solid, state_of_sample, molecule, chemical, protein
+from .models import FTIRModel,User, dried_film, gas, publication, data_aquisition, experimental_conditions,spectrometer, project_has_experiment, exp_has_publication, experiment, liquid, project, molecules_in_sample, sample, solid, state_of_sample, molecule, chemical, protein
 from .models.FTIRModel import spectra
 
 def includeme(config):
     """Direct web address to correct page and python views """
     config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_route('view_wiki', '/')
     config.add_route('searchdb','/searchdb')
     #config.add_route('form','/form')
     config.add_route('projectform','/projectform')
@@ -47,7 +46,8 @@ def includeme(config):
     config.add_route('moleculeForm2','/moleculeForm2/{sample_ID}')
     config.add_route('moleculePage','/moleculePage/{molecule_ID}')
     config.add_route('experimentForm','/experimentForm')
-    config.add_route('spectrometerForm','/spectrometerForm/{experiment_ID}')
+    config.add_route('spectrometerForm','/spectrometerForm')
+    config.add_route('spectrometerForm2','/spectrometerForm2/{experiment_ID}')
     config.add_route('spectrometerPage','/spectrometerPage/{spectrometer_ID}')
     config.add_route('experimentForm2','/experimentForm2/{project_ID}')
     config.add_route('experimentPage','/experimentPage/{experiment}')
@@ -55,7 +55,6 @@ def includeme(config):
     config.add_route('spectraPage','/spectraPage/{spectra_ID}')
     
     config.add_route('results','/results/{results}/{table}')
-    config.add_route('graph','/graph')
     config.add_route('about', '/about')
    # config.add_route('jcampupload', '/jcampupload')
     config.add_route('upload', '/upload')
@@ -77,7 +76,7 @@ def new_page_factory(request):
 
 def user_factory(request):
     user = request.matchdict['user']
-    page = request.dbsession.query(users).filter_by(name=user).first()
+    page = request.dbsession.query(User).filter_by(name=user).first()
     if page is None:
         raise HTTPNotFound
     return PageResource(page)

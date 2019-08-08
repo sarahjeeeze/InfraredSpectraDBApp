@@ -25,6 +25,25 @@
 
 <div><p>{{ samplePage | safe}}</p></div>
 
+<b> Sample data </b>
+<div> {% for key in samplePage %}
+<li>{{ key | safe }} : {{ samplePage[key] | safe }}</li>
+
+{% endfor %}
+
+<b>Sample conditions </b>
+<div> {% for key in stateofsample %}
+<li>{{ key | safe }} : {{ stateofsample[key] | safe }}</li>
+
+{% endfor %}
+<b> State of sample</b> 
+<div> {% for key in statedic %}
+<li>{{ key | safe }} : {{ statedic[key] | safe }}</li>
+
+{% endfor %}
+
+
+
 
 
 <form action="" id="one">

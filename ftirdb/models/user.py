@@ -12,7 +12,7 @@ This program is released under the GNU Public Licence (GPL V3)
 --------------------------------------------------------------------------
 Description:
 ============
-The file contains a function to create the user table model including functions
+The file contains a function to create the user/depositor table model including functions
 for ensuring the password is encrypted/hashed - using bcrypt
 
 

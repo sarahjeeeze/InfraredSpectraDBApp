@@ -23,8 +23,17 @@
 
 
 <div><p>{{ spectrometerPage  | safe}}</p></div>
+<b> SpectrometerPage</b> 
+<div> {% for key in spectrometer %}
+<li>{{ key | safe }} : {{ spectrometerPage[key] | safe }}</li>
 
+{% endfor %}
 
+<b> Details of spectrometer</b> 
+<div> {% for key in details %}
+<li>{{ key | safe }} : {{ details[key] | safe }}</li>
+
+{% endfor %}
 
 <div style="text-align:center;margin-top:40px;">
   <span class="step"></span>

@@ -25,6 +25,17 @@
 
 <div><p>{{ moleculePage | safe}}</p></div>
 
+<b> Molecule Name</b> 
+<div> {% for key in moleculePage %}
+<li>{{ key | safe }} : {{ moleculePage[key] | safe }}</li>
+
+{% endfor %}
+<b> Molecule Information</b> 
+<div> {% for key in moleculeInfo %}
+<li>{{ key | safe }} : {{ moleculeInfo[key] | safe }}</li>
+
+{% endfor %}
+
 
 
 <div style="text-align:center;margin-top:40px;">

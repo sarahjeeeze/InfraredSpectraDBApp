@@ -5,15 +5,16 @@ File: views/graph.py
 
 Version: v1.0
 Date: 10.09.2018
-Function: provides functions required for addAccount view
+Function: Methods required for filling out experiment form and returning an experiment record
 
 This program is released under the GNU Public Licence (GPL V3)
 
 --------------------------------------------------------------------------
 Description:
 
-Contains functions required for viewing graphs based on jcamp files
-
+Outputs forms for front end and values to add to database, and error checking
+Also contains views for outputting experiment records and all associated meta data as well as
+hyperlinks to related projects
 
 
 ============
@@ -65,9 +66,8 @@ from ..models import FTIRModel, dried_film, spectra, data_aquisition, post_proce
 @view_config(route_name='experimentForm', renderer='../templates/experimentForm.jinja2')
 def experimentForm(request):
 
-   
-    
-    """ project form page """
+    """ Create the experiment form using colander alchemy and deform, use sql alchemy sessions to add the data to the database """
+    #create schema for each table
     class All(colander.MappingSchema):
         setup_schema(None,experiment)
         experimentSchema=experiment.__colanderalchemy__
@@ -78,13 +78,13 @@ def experimentForm(request):
         
     
     tables = All()
+    #create the deform form
     form = deform.Form(tables,buttons=('submit',))
         
     if 'submit' in request.POST:
-        #map columns
-        controls = request.POST.items()
 
-        controls = request.POST.items()     #call validate
+        controls = request.POST.items()
+        #change structure from multidictionary to dictionary
         pstruct = peppercorn.parse(controls)
         print(pstruct)
         
@@ -92,11 +92,10 @@ def experimentForm(request):
         try:
 
 
-
-                appstruct = form.validate(controls)
+                appstruct = form.validate(controls)#call validate
                 experiment_description = request.params['experiment_description']
-                exp = pstruct['experimentSchema'] # try to add to database
-                print(exp)
+                exp = pstruct['experimentSchema']
+                #use **kwargs to add all form fields to the database
                 page = experiment(project_ID=0,**exp)
                 request.dbsession.add(page)
                 experiment_description= request.params['experiment_description']
@@ -104,34 +103,29 @@ def experimentForm(request):
                 id = request.dbsession.query(experiment).order_by(experiment.experiment_ID.desc()).first()#link experiment column to related foreign keys
                 #experiment_id = request.dbsession.query(experiment).filter_by(experiment_description=experiment_description).first()
                 experiment_id = int(id.experiment_ID) 
-                
                 experimental_cond = pstruct['conditionsSchema']
                 page = experimental_conditions(experiment_ID=experiment_id, **experimental_cond)
                 request.dbsession.add(page)
                 data_aq = pstruct['data_aquisition_Schema']
                 page = data_aquisition(**data_aq, experiment_ID=experiment_id)
                 request.dbsession.add(page)
-                #experiment_id = request.dbsession.query(experiment).filter_by(experiment_description=experiment_description).first()
-                
                 next_url = request.route_url('experimentPage', experiment=experiment_id)
                 return HTTPFound(location=next_url)
              
         except deform.ValidationFailure as e: # catch the exception
                 return {'experimentForm':e.render()}
-           
-
-        
     
     else:
         experimentForm = form.render()
+        #render the form as a dictionary
         return{'experimentForm':experimentForm}
 
 @view_config(route_name='experimentForm2', renderer='../templates/experimentForm2.jinja2')
 def experimentForm2(request):
-
     
     
-    """ project form page """
+    
+    """ repeated from above but this time if experiment is added from the project page the project ID will be recorded """
     class All(colander.MappingSchema):
         setup_schema(None,experiment)
         experimentSchema=experiment.__colanderalchemy__
@@ -145,21 +139,18 @@ def experimentForm2(request):
     form = deform.Form(tables,buttons=('submit',))
         
     if 'submit' in request.POST:
-        #map columns
+        
         controls = request.POST.items()
-        project_ID = request.matchdict['project_ID']
-        controls = request.POST.items()     #call validate
+        project_ID = request.matchdict['project_ID']#this is the only different field - get the related project ID
+        controls = request.POST.items()     
         pstruct = peppercorn.parse(controls)
-        print(pstruct)
         
 
         try:
 
-
-
                 appstruct = form.validate(controls)
                 experiment_description = request.params['experiment_description']
-                exp = pstruct['experimentSchema'] # try to add to database
+                exp = pstruct['experimentSchema'] 
                 print(exp)
                 page = experiment(project_ID=project_ID,**exp)
                 request.dbsession.add(page)
@@ -183,29 +174,22 @@ def experimentForm2(request):
         except deform.ValidationFailure as e: # catch the exception
                 return {'experimentForm':e.render()}
            
-
-        
     
     else:
         experimentForm = form.render()
         return{'experimentForm':experimentForm}
-    
-
     
     
 @view_config(route_name='experimentPage', renderer='../templates/experimentPage.jinja2')
 
 def experimentPage(request):
 
-    """This page takes a project with project_ID in the URL and returns a page with a dictionary of
-all the values, it also contains buttons for adding samples and experiments. When page is linked from here
-the child/parent relationship is created"""
-
-    
+    """This page takes the experiment ID from the URL and returns a page with a dictionary of
+all the values, it also contains buttons for adding samples and experiments."""
 
 
     search = request.matchdict['experiment']
-    #search = request.params['body']
+    #Query database to retrieve all related information and output as dictionarys
     searchdb = request.dbsession.query(experiment).filter_by(experiment_ID=search).all()
     dic = {}
     for u in searchdb:
@@ -235,15 +219,16 @@ the child/parent relationship is created"""
     print('here')
     import random
     for k,v in spec.items():
+	#plot all spectra related to the experiment on one graph	
         colory  = '#' + ("%06x" % random.randint(0, 0xFFFFFF))
-
-        jcamp_dict =  JCAMP_reader(pathlib.PureWindowsPath('C:/ftirdb/ftirdb/data/infrared_spectra/' + spec[k]))
+        dic4[k] = colory
+        jcamp_dict =  JCAMP_reader(os.path.join('ftirdb','data','infrared_spectra',  spec[k]))
         print(k)
         plt.plot(jcamp_dict['x'], jcamp_dict['y'], label='filename', color=colory)
         plt.xlabel(jcamp_dict['xunits'])
         plt.ylabel(jcamp_dict['yunits'])
-    plt.savefig(pathlib.PureWindowsPath('C:/ftirdb/ftirdb/static/experiment.png'))
-     
+    plt.savefig(os.path.join('ftirdb','static','experiment.png'))
+    print(dic4)
                                                                                                
     
     if 'form.submitted' in request.params:       

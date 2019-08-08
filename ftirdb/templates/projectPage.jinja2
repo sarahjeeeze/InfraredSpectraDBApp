@@ -49,7 +49,7 @@
  <div class="col-md-12">
 Project data
 <div> {% for key in dic %}
-<li>{{ key | safe }} : {{ dic[key] | safe }}</li>
+{{ key | safe }} : {{ dic[key] | safe }}
 
 {% endfor %}
 

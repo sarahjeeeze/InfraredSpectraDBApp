@@ -31,7 +31,7 @@
 Related Spectra
 <div> {% for key,value in spectra.items() %}
 
-<li><a href="http://localhost:6543/spectraPage/{{ key | safe}}">{{ key }}</a> <a href="http://localhost:6543/static/data/{{ value | safe}}" download > download final published </a>
+<li><a style="text-decorations:none; color:inherit;><a href="http://localhost:6543/spectraPage/{{ key | safe}}">{{ key }}</a> <a href="http://localhost:6543/static/data/{{ value | safe}}" download > download final published   </a> <font color={{ dic4[key] | safe}}> Spectra color
 </li>
 {% endfor %}
 

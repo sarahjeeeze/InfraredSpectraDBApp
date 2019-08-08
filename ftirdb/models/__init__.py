@@ -16,11 +16,7 @@ If a developer wants to add any models they must be imported here
 It initialises an SQL alchemy database connection using the configuration settings located in
 C:\ftirdb\development or C:\ftirdb\production depending on required enviroment.
 
-
-
 ============
-
-
 
 """
 
@@ -31,7 +27,7 @@ import zope.sqlalchemy
 
 # import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines
-from .FTIRModel import FTIRModel, dried_film, atr, publication, not_atr, transflectance_diffuse, spectrometer, post_processing_and_deposited_spectra,data_aquisition, spectra, experimental_conditions, project_has_experiment, exp_has_publication, experiment, gas, molecule, protein, chemical, liquid, project, molecules_in_sample, sample, solid, state_of_sample
+from .FTIRModel import other, dried_film, atr, publication, not_atr, transflectance_diffuse, spectrometer, post_processing_and_deposited_spectra,data_aquisition, spectra, experimental_conditions, project_has_experiment, exp_has_publication, experiment, gas, molecule, protein, chemical, liquid, project, molecules_in_sample, sample, solid, state_of_sample
 from .user import User
 
 # run configure_mappers after defining all of the models to ensure

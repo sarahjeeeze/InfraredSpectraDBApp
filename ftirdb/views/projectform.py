@@ -5,21 +5,18 @@ File: views/graph.py
 
 Version: v1.0
 Date: 10.09.2018
-Function: provides functions required for addAccount view
+Function: provides functions required for adding and viewing a project
 
 This program is released under the GNU Public Licence (GPL V3)
 
 --------------------------------------------------------------------------
 Description:
 
-Contains functions required for viewing graphs based on jcamp files
-
-
-
 ============
 
 
 """
+#import modules
 from pyramid.compat import escape
 import re
 from docutils.core import publish_parts
@@ -149,13 +146,13 @@ all the values for the project, associated experiments and publication data, it 
         
     else:
         search = request.matchdict['pagename']
-    #return project related to ID 
+    #return project info related to ID 
         
         searchdb = request.dbsession.query(project).filter_by(project_ID=search).all()
-        dic = {}
+        projectdic = {}
         for u in searchdb:
             new = u.__dict__
-            dic.update( new )
+            projectdic.update( new )
         
         
         searchexp = request.dbsession.query(experiment).filter_by(project_ID=search).all()
@@ -166,7 +163,7 @@ all the values for the project, associated experiments and publication data, it 
             new = u.__dict__
             expdic.update( new )
       
-    #return samples related to ID in a dictionary
+    #return samples related to project ID in a dictionary
 
        
         samples = {}
@@ -179,9 +176,7 @@ all the values for the project, associated experiments and publication data, it 
            
         
         
-    #return spectra related to ID in a dictionary
-        #need to return spectra ID and use for getting data from ppd
-    # return experiment data
+    #return experiment data related to project ID, use try and except in case no results are returned
         exp_ID = request.dbsession.query(experiment.experiment_ID).filter_by(project_ID=search).first()
         
         try:
@@ -189,18 +184,15 @@ all the values for the project, associated experiments and publication data, it 
             exp_ID = exp_ID[0]
         except:
             exp_ID = 0
-        print('here')
    
-        print(searchexp2)
-        exper = {}
+        exper_IDs = {}
     
-        # just return related experiment ID's
         for u in searchexp2:
             num = u[0]
             exper[ 'experiment' + str(num)] = num
-           
+   
        
-    #return spectra detail
+    #return spectra associated
         spectradic = {}
         search = request.dbsession.query(spectra).filter_by(experiment_ID=exp_ID).all()
         for u in search:
@@ -214,10 +206,8 @@ all the values for the project, associated experiments and publication data, it 
         except:
             ppd_ID = 0
             
-        # need to fix this 
       
      
-        #for some reason the spectra_ID in ppd are all 1
         
         search2 = request.dbsession.query(post_processing_and_deposited_spectra).filter_by(spectra_ID=ppd_ID).all()
         depodic = {}
@@ -244,12 +234,9 @@ all the values for the project, associated experiments and publication data, it 
             new = u.__dict__
             publicationdic.update( new )
         
-       
-     
-
         
 
-        return {'dic': dic , 'expdic':expdic,'exper':exper,'samples':samples, 'publication':publicationdic}
+        return {'dic': projectdic , 'expdic':expdic,'exper':exper_IDs,'samples':samples, 'publication':publicationdic}
     
     
     

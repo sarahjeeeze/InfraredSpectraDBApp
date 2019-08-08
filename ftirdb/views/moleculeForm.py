@@ -5,7 +5,7 @@ File: views/graph.py
 
 Version: v1.0
 Date: 10.09.2018
-Function: provides functions required for addAccount view
+Function: provides functions required the molecule form and to view molecule record
 
 This program is released under the GNU Public Licence (GPL V3)
 
@@ -20,6 +20,7 @@ Contains functions required for viewing graphs based on jcamp files
 
 
 """
+#import all modules required
 from pyramid.compat import escape
 import re
 from docutils.core import publish_parts
@@ -31,7 +32,7 @@ import peppercorn
 import requests
 from deform import Form, FileData
 import os
-#imppot sqlalchemy 
+import sqlalchemy
 from sqlalchemy import event
 from sqlalchemy import *
 from sqlalchemy.databases import mysql
@@ -56,34 +57,32 @@ import deform
 import colander
 from deform import widget
 
-from ..models import sample, state_of_sample, molecules_in_sample, liquid, gas, solid, dried_film, molecule, protein, chemical
+from ..models import sample, state_of_sample, molecules_in_sample, other, liquid, gas, solid, dried_film, molecule, protein, chemical
 
 
 
 
 @view_config(route_name='moleculeForm', renderer='../templates/moleculeForm.jinja2')
-def moleForm(request):
+def moleculeForm(request):
     
-    """ project form page """
+    """ The view for adding a molecule """
 
-   
-    choices = ('1','2','3')    
+    #set up schema   
     class All(colander.MappingSchema):
         setup_schema(None,molecule)
         moleculeschema=molecule.__colanderalchemy__
-        
         setup_schema(None,protein)
         proteinschema=protein.__colanderalchemy__
         setup_schema(None,chemical)
         chemschema=chemical.__colanderalchemy__
+        setup_schema(None,other)
+        otherschema=other.__colanderalchemy__
+		
         
-        #protein = proteins(widget=deform.widget.SequenceWidget(orderable=True))
-
-        
+       
         
     form = All()
-    print(form)
-    #reqts = form['form1']['form'].get_widget_resources()
+    #create form with deform
     form = deform.Form(form,buttons=('submit',))
 
     
@@ -98,38 +97,36 @@ def moleForm(request):
         controls = request.POST.items()
         pstruct = peppercorn.parse(controls)
         
-        #molecule
-  
-    
-                 
-                #format for db input - descriptive_name = request.params['descriptive_name']
-        
       
         try:
 
-                #appstruct = form.validate(controls) 
-
+                appstruct = form.validate(request.POST.items()) #call validate
+                #if accepted add items to database
                 mole = pstruct['moleculeschema']
                 moleculename = request.params['molecule_name']
                 
                 page = molecule(**mole)
                 request.dbsession.add(page)
-
-                prot = pstruct['proteinschema']
-                page = protein(**prot)
-                request.dbsession.add(page)
                 molecule_id = request.dbsession.query(molecule).order_by(molecule.molecule_ID.desc()).first()
                 molecule_id  = molecule_id.molecule_ID
+
+                prot = pstruct['proteinschema']
+                page = protein(**prot,molecule_ID=molecule_id)
+                request.dbsession.add(page)
+                
                 print(molecule_id)
                 chem = pstruct['chemschema']
-                page = chemical(**chem)
+                page = chemical(**chem,molecule_ID=molecule_id)
+                request.dbsession.add(page)
+                oth = pstruct['otherschema']
+                page = other(**oth,molecule_ID=molecule_id)
                 request.dbsession.add(page)
                 
                 next_url = request.route_url('moleculePage', molecule_ID=molecule_id)
                 return HTTPFound(location=next_url)
              
         except deform.ValidationFailure as e: # catch the exception
-                return {'sampleForm':e.render()}
+                return {'sampleForm':e.render()} #return error report
            
 
         
@@ -141,26 +138,25 @@ def moleForm(request):
 @view_config(route_name='moleculeForm2', renderer='../templates/moleculeForm2.jinja2')
 def moleForm(request):
     
-    """ project form page """
-
+    """ The view for adding a molecule in sequence with a sample"""
+    #request sample_ID from the address
     sample_ID = request.matchdict['sample_ID']
-    choices = ('1','2','3')    
+    #create schema
     class All(colander.MappingSchema):
         setup_schema(None,molecule)
         moleculeschema=molecule.__colanderalchemy__
-        
         setup_schema(None,protein)
         proteinschema=protein.__colanderalchemy__
         setup_schema(None,chemical)
         chemschema=chemical.__colanderalchemy__
+        setup_schema(None,other)
+        otherschema=other.__colanderalchemy__
         
-        #protein = proteins(widget=deform.widget.SequenceWidget(orderable=True))
 
         
         
     form = All()
-    print(form)
-    #reqts = form['form1']['form'].get_widget_resources()
+    #create form with deform
     form = deform.Form(form,buttons=('submit',))
 
     
@@ -175,34 +171,32 @@ def moleForm(request):
         controls = request.POST.items()
         pstruct = peppercorn.parse(controls)
         
-        #molecule
-  
-    
-                 
-                #format for db input - descriptive_name = request.params['descriptive_name']
         
-      
         try:
 
-                #appstruct = form.validate(controls) 
-
+                appstruct = form.validate(request.POST.items()) #call validate
+                #if accepted add to the database
                 mole = pstruct['moleculeschema']
                 moleculename = request.params['molecule_name']
                 
                 page = molecule(**mole)
                 request.dbsession.add(page)
-
-                prot = pstruct['proteinschema']
-                page = protein(**prot)
-                request.dbsession.add(page)
+                #find molecule id by sorting data in descending order and taking the first one
                 molecule_id = request.dbsession.query(molecule).order_by(molecule.molecule_ID.desc()).first()
                 molecule_id  = molecule_id.molecule_ID
-                print(molecule_id)
-                chem = pstruct['chemschema']
-                page = chemical(**chem)
+                
+
+                prot = pstruct['proteinschema']
+                page = protein(**prot,molecule_ID=molecule_id)
                 request.dbsession.add(page)
                 
-                #fill out association table but only if form navigated from sample page
+                print(molecule_id)
+                chem = pstruct['chemschema']
+                page = chemical(**chem,molecule_ID=molecule_id)
+                request.dbsession.add(page)
+                oth = pstruct['otherschema']
+                page = other(**oth,molecule_ID=molecule_id)
+                request.dbsession.add(page)
                 
                 next_url = request.route_url('moleculePage', molecule_ID=molecule_id)
                 return HTTPFound(location=next_url)
@@ -221,34 +215,35 @@ def moleForm(request):
 
 def moleculePage(request):
 
-    """This page takes a project with project_ID in the URL and returns a page with a dictionary of
-all the values, it also contains buttons for adding samples and experiments. When page is linked from here
-the child/parent relationship is created"""
+    """This page takes returns all the data associated with a molecule record"""
 
     if 'form.submitted' in request.params:
+        # if any buttonns added then actions can be specified here
         if 'form.submitted' == 'sample':
             
             return {'projectForm': 'sample'}
         else:
             return {'projectForm': 'experiment'}
             
-        #next_url = request.route_url('projectPage', pagename=4)
-        #return HTTPFound(location=next_url)
-        
-        
+   
         
     else:
-        print(request)
+        #query database for molecule ID in molecule
+        # may want to use joins or additional querys to return additional info eg. related samples
         search = request.matchdict['molecule_ID']
-    #search = request.params['body']
         searchdb = request.dbsession.query(molecule).filter_by(molecule_ID=search).all()
         dic = {}
-    #return the dictionary of all values from the row
-        for u in searchdb:
-            new = u.__dict__
-            dic.update( new )
+        for i in searchdb:
+                new = i.__dict__
+                dic.update( new )
+        # search chemical, protein and other table for related details 
+        searchprotein = request.dbsession.query(chemical,protein,other).filter_by(molecule_ID=search).all()
+        moldic = {}
+        for u in searchprotein:
+            for i in u:
+                new = i.__dict__
+                moldic.update( new )
     
-    #need to work on display of this 
-        return {'moleculePage': dic}
+        return {'moleculePage': dic, 'moleculeInfo':moldic}
     
     
