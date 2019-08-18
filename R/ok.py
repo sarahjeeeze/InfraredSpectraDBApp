@@ -65,9 +65,11 @@ for filename in os.listdir('C:/ftirdb/ftirdb/data/kinetics/JDX files'):
         plt.plot(new['x'], new['y'], label='filename', linewidth=0.2, color = 'blue')
     elif count < 300:
         plt.plot(new['x'], new['y'], label='filename', linewidth=0.2, color = 'pink')
+    elif count < 350:
+        plt.plot(new['x'], new['y'], label='filename', linewidth=0.2, color = 'green')
     
     else:
-        plt.plot(new['x'], new['y'], label='filename', linewidth=0.2, color = 'green')
+        plt.plot(new['x'], new['y'], label='filename', linewidth=0.2, color = 'brown')
 
 
 for i in y_array:

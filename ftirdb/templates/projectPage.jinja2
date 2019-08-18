@@ -37,35 +37,37 @@
 </p>
 
 
-<div><p>{{ dic | safe}}</p></div>
-<div><p>{{ expdic | safe}}</p></div>
-<div><p>{{ spectrodic | safe}}</p></div>
-<div><p>{{ depodic | safe}}</p></div>
 
 
 
-
-
- <div class="col-md-12">
-Project data
+<b> Project information </b><br>
 <div> {% for key in dic %}
-{{ key | safe }} : {{ dic[key] | safe }}
+<li>{{ key | safe }} : {{ dic[key] | safe }}</li>
 
 {% endfor %}
 
-<div><p>Publication information
+<div><p><b>Publication information <br>
 
-{{ publication | safe}}</p></div>
+</b> 
+<div> {% for key in publication %}
+<li>{{ key | safe }} : {{ publication[key] | safe }}</li>
 
-Related experiments
+{% endfor %}
+<b> Link to publication </b><br>
+
+<a href="https://pubs.rsc.org/en/content/articlelanding/2014/an/c3an01454a/unauth">https://pubs.rsc.org/en/content/articlelanding/2014/an/c3an01454a/unauth
+
+</a><br>
+
+<b> Related experiments <b> <br>
 <div> {% for key,value in exper.items() %}
 <li><a href="http://localhost:6543/experimentPage/{{ value | safe}}">{{ key }}</li></a>
 
 
 {% endfor %}
 
-
-Related Samples
+<b> 
+Related Samples <b> <br>
 <div> {% for key,value in samples.items() %}
 <li><a href="http://localhost:6543/samplePage/{{ value | safe}}">{{ key }}</li></a>
 

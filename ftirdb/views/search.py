@@ -30,13 +30,13 @@ import re
 from docutils.core import publish_parts
 import matplotlib.pyplot as plt
 from jcamp import JCAMP_reader, JCAMP_calc_xsec
-import colander 
+import colander
 import deform
 import peppercorn
 import requests
 from deform import Form, FileData
 import os
-#imppot sqlalchemy 
+#imppot sqlalchemy
 from sqlalchemy import event
 from sqlalchemy import *
 from sqlalchemy.databases import mysql
@@ -52,7 +52,7 @@ from pyramid.httpexceptions import (
     HTTPForbidden,
     HTTPFound,
     HTTPNotFound,
-    )
+)
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
@@ -62,8 +62,7 @@ import colander
 import deform
 from deform import widget
 #import models
-from ..models import FTIRModel, User,  spectra, experiment, project, spectrometer, molecule, sample
-
+from ..models import FTIRModel, User, spectra, experiment, project, spectrometer, molecule, sample
 
 
 @view_config(route_name='about', renderer='../templates/about.jinja2')
@@ -71,6 +70,8 @@ def view_about(request):
     """function for calling a basic page with an about page
     this about information can all be written in the jinja2 page as it is all static"""
     return {}
+
+
 #added function for searching db based on input parameters - returns list of relvant records
 @view_config(route_name='searchdb', renderer='../templates/searchdb.jinja2')
 def view_searchdb(request):
@@ -78,25 +79,26 @@ def view_searchdb(request):
     input: parameters to search on (currently just any word
     output: list of search results
     Jinja 2 will render these in to html"""
-    
+
     if 'form.submitted' in request.params:
         #use a look up to find search term
 
-        
         search = request.params['body']
-        
+
         #need to work on getting it to return dictionary of all results
-        next_url = request.route_url('results', results=search, table = request.params['table'])
-        
+        next_url = request.route_url('results',
+                                     results=search,
+                                     table=request.params['table'])
+
         return HTTPFound(location=next_url)
-        
+
         #return dict(('<a href="%s">%s</a>' % (next_url, escape(search))))
-    
-    return {}   
-    
+
+    return {}
 
 
-@view_config(route_name='view_page', renderer='../templates/view.jinja2',
+@view_config(route_name='view_page',
+             renderer='../templates/view.jinja2',
              permission='view')
 def view_page(request):
     """function to view a specific page once clicked on, retrieves data entry
@@ -108,7 +110,8 @@ def view_page(request):
 
     def add_link(match):
         word = match.group(1)
-        exists = request.dbsession.query(project).filter_by(project_ID=word).all()
+        exists = request.dbsession.query(project).filter_by(
+            project_ID=word).all()
         if exists:
             view_url = request.route_url('view_page', pagename=word)
             return '<a href="%s">%s</a>' % (view_url, escape(word))
@@ -121,7 +124,9 @@ def view_page(request):
     edit_url = request.route_url('edit_page', pagename=page.name)
     return dict(page=page, content=content, edit_url=edit_url)
 
-@view_config(route_name='edit_page', renderer='../templates/edit.jinja2',
+
+@view_config(route_name='edit_page',
+             renderer='../templates/edit.jinja2',
              permission='edit')
 def edit_page(request):
     """ function to allow you to edit a record
@@ -139,7 +144,8 @@ def edit_page(request):
         pagedata=page.data,
         pagemagic=page.magic,
         save_url=request.route_url('edit_page', pagename=page.name),
-        )
+    )
+
 
 @view_config(route_name='add_page', renderer='../templates/addPage.jinja2')
 def add_page(request):
@@ -154,7 +160,7 @@ def add_page(request):
         name = request.params['name']
         body = request.params['body']
         body2 = request.params['body2']
-        
+
         experiment = request.params['experiment']
         if not experiment:
             return Response('{"error"}')

@@ -21,13 +21,11 @@ Contains functions required fo authorising a log in
 
 """
 
-
-
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import (
     remember,
     forget,
-    )
+)
 from pyramid.view import (
     forbidden_view_config,
     view_config,
@@ -61,10 +59,10 @@ def login(request):
         url=request.route_url('login'),
         next_url=next_url,
         login=login,
-        )
+    )
+
 
 @view_config(route_name='logout')
-    
 def logout(request):
     """function called when user logs out
     input: reqeust to logout
@@ -73,6 +71,7 @@ def logout(request):
     headers = forget(request)
     next_url = request.route_url('about')
     return HTTPFound(location=next_url, headers=headers)
+
 
 @forbidden_view_config()
 def forbidden_view(request):
