@@ -25,11 +25,12 @@ def kineticsparser(name):
            interval = int(line)
            
        elif count > 13:
-           k = float(line)
+           k = line
+           
            
            ok = (int(lastx)-2)+((count-13)*interval) # ascending x axis
            tr = (int(firstx)+2)-((count-13)*interval) #descending x axis
-           L =  ((str(tr)) + ' ' + (str(k)) + '\n')
+           L =  ((str(tr)) + ' ' + (str(k)))
            new += L
     alljcamp = '##TITLE=Methyl Ethyl Ketone\n##JCAMP-DX=4.24\n##DATA TYPE=INFRARED SPECTRUM\n##XUNITS=cm-1\n##YUNITS=Absorbance\n##FIRSTX=' + str(firstx)+'##LASTX=' + str(lastx) +'##XYDATA=(X++(Y..Y))\n' + new
     filename = name.split('.')

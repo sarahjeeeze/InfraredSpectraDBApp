@@ -79,7 +79,6 @@ class state_of_sample(Base):
     state = Column(Enum('gas', 'solid', 'dried film', 'liquid',''), nullable=False, info={'colanderalchemy': {'exclude': True}})
     temperature_degrees = Column(INTEGER(11), default=0, info={'colanderalchemy': {'description': 'In degrees centigrade'}})
     pressure_PSI = Column(INTEGER(11), default=0, info={'colanderalchemy': {'validator': Range(min=0, max=1000), 'description': 'PSI'}})
-    #child 
     sample_ID = Column(Integer, ForeignKey('sample.sample_ID'),  info={'colanderalchemy': {'exclude': True}})
 
 class molecules_in_sample(Base):

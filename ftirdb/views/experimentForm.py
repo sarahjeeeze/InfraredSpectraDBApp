@@ -1,7 +1,7 @@
 """
 
 Project: FTIRDB
-File: views/graph.py
+File: views/experimentForm.py
 
 Version: v1.0
 Date: 10.09.2018
@@ -12,7 +12,7 @@ This program is released under the GNU Public Licence (GPL V3)
 --------------------------------------------------------------------------
 Description:
 
-Outputs forms for front end and values to add to database, and error checking
+Outputs experiment forms for front end and values to add to database, and error checking
 Also contains views for outputting experiment records and all associated meta data as well as
 hyperlinks to related projects
 
@@ -58,7 +58,6 @@ import colander
 
 from ..models import FTIRModel, dried_film, spectra, data_aquisition, post_processing_and_deposited_spectra, experimental_conditions, project_has_experiment, exp_has_publication, experiment, gas, molecule, protein, chemical, liquid, project, molecules_in_sample, sample, solid, state_of_sample
 
-# regular expression used to find WikiWords
 
 
 @view_config(route_name='experimentForm',
@@ -99,7 +98,6 @@ def experimentForm(request):
             id = request.dbsession.query(experiment).order_by(
                 experiment.experiment_ID.desc()).first(
                 )  #link experiment column to related foreign keys
-            #experiment_id = request.dbsession.query(experiment).filter_by(experiment_description=experiment_description).first()
             experiment_id = int(id.experiment_ID)
             experimental_cond = pstruct['conditionsSchema']
             page = experimental_conditions(experiment_ID=experiment_id,
@@ -150,7 +148,7 @@ def experimentForm2(request):
             appstruct = form.validate(controls)
             experiment_description = request.params['experiment_description']
             exp = pstruct['experimentSchema']
-            print(exp)
+            
             page = experiment(project_ID=project_ID, **exp)
             request.dbsession.add(page)
             experiment_description = request.params['experiment_description']
@@ -221,8 +219,6 @@ all the values, it also contains buttons for adding samples and experiments."""
     #dic of related spectra 'final published file name to download from experiment page'
     dic4 = {}
 
-    print(spec)
-    print('here')
     import random
     plt.figure(1)
     for k, v in spec.items():
@@ -239,7 +235,6 @@ all the values, it also contains buttons for adding samples and experiments."""
         plt.xlabel(jcamp_dict['xunits'])
         plt.ylabel(jcamp_dict['yunits'])
     plt.savefig(os.path.join('ftirdb', 'static', 'experiment.png'))
-    print(dic4)
 
     if 'form.submitted' in request.params:
         if request.params['form.submitted'] == 'Add spectrometer':
@@ -253,7 +248,7 @@ all the values, it also contains buttons for adding samples and experiments."""
         else:
             next_url = request.route_url('spectraForm')
             return HTTPFound(location=next_url)
-        #return HTTPFound(location=next_url)
+    #should update these dic names in future
 
     else:
         return {
