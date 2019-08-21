@@ -3,8 +3,8 @@ library(data.table)
 par(pin=c(5,4),mfrow=c(1,1),font=2,ps=10,family="sans")
 x <- seq(900,2300,2)
 #import file
-file <- 'C:/ftirdb/R/fun.csv'
-file2 <-'C:/ftirdb/R/trans.csv'
+file <- 'C:/ftirdb/R/alldata.csv'
+
 spectra <- read.csv(file, header = TRUE, row.names=NULL)
 
 #pca using dataframe
