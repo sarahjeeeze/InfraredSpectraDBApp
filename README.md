@@ -21,3 +21,4 @@ exit
 9. Run your project's tests with `pytest`
 10. Run your project `pserve development.ini`
 
+![](Additional%20scripts/screenshot.png)
