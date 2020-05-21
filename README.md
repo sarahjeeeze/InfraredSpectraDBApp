@@ -1,7 +1,7 @@
 # ftirdb
 # Introduction
 
-`ftirdb` is a ...
+`ftirdb` is a databank application for uploading and retrieving infrared spectra for biomolecules. Anything from tissue samples to proteins. 
 
 # Installation 
 
